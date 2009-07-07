@@ -53,6 +53,21 @@ class RouteToMatcherTest < ActionController::TestCase # :nodoc:
                        to(:action => 'other', :id => '1'),
                      @controller
     end
+
+  end
+
+  context 'given params { :controller => "foo", :action => "bar" }' do
+    RouteMatcher = Shoulda::ActionController::Matchers::RouteMatcher
+    setup do
+      @matcher = RouteMatcher.new(:get, "/example", nil)
+      @matcher.to(:action => "bar", :controller => "foo")
+    end
+
+    should "describe params in key order" do
+      expected_description = 
+        "route GET /example to/from {:action=>\"bar\", :controller=>\"foo\"}"
+      assert_equal expected_description, @matcher.description
+    end
   end
 
 end

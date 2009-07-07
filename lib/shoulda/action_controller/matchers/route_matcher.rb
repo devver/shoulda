@@ -54,10 +54,20 @@ module Shoulda # :nodoc:
         attr_reader :failure_message, :negative_failure_message
 
         def description
-          "route #{@method.to_s.upcase} #{@path} to/from #{@params.inspect}"
+          "route #{@method.to_s.upcase} #{@path} to/from #{serialize_params(@params)}"
         end
 
         private
+
+        # A deterministic inspection method for hashes
+        def serialize_params(params)
+          sorted_keys = params.keys.sort{|l,r| l.inspect <=> r.inspect}
+          keys_and_values = sorted_keys.inject([]) do |pairs, key|
+            pairs << "#{key.inspect}=>#{params[key].inspect}"
+            pairs
+          end.join(", ")
+          "{" + keys_and_values + "}"
+        end
 
         def guess_controller!
           @params[:controller] ||= @controller.controller_path
